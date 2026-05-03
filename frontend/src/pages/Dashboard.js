@@ -1,21 +1,34 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import API from "../api";
+import { validationRules } from "../utils/validationRules";
+import { errorMessages } from "../utils/errorMessages";
+import FormError from "../components/FormError";
 
 function Dashboard({ user, setUser }) {
   const navigate = useNavigate();
 
-  const [payment, setPayment] = useState({
-    amount: "",
-    currency: "USD",
-    provider: "SWIFT",
-    payeeName: "",
-    payeeAccountNumber: "",
-    swiftCode: "",
-  });
-
   const [payments, setPayments] = useState([]);
   const [message, setMessage] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      amount: "",
+      currency: "USD",
+      provider: "SWIFT",
+      payeeName: "",
+      payeeAccountNumber: "",
+      swiftCode: "",
+    }
+  });
 
   const loadPayments = async () => {
     try {
@@ -30,29 +43,27 @@ function Dashboard({ user, setUser }) {
     loadPayments();
   }, []);
 
-  const updatePayment = (e) => {
-    setPayment({ ...payment, [e.target.name]: e.target.value });
-  };
-
-  const submitPayment = async (e) => {
-    e.preventDefault();
+  const onSubmitPayment = async (data) => {
     setMessage("");
 
     try {
-      await API.post("/payments", payment);
+      await API.post("/payments", data);
       setMessage("Payment submitted successfully.");
-      setPayment({
-        amount: "",
-        currency: "USD",
-        provider: "SWIFT",
-        payeeName: "",
-        payeeAccountNumber: "",
-        swiftCode: "",
-      });
+      reset();
       loadPayments();
+      setShowConfirm(false);
     } catch (err) {
       setMessage(err.response?.data?.message || "Payment failed.");
+      setShowConfirm(false);
     }
+  };
+
+  const handlePaymentSubmit = (data) => {
+    setShowConfirm(true);
+  };
+
+  const confirmPayment = () => {
+    handleSubmit(onSubmitPayment)();
   };
 
   const logout = async () => {
@@ -99,27 +110,121 @@ function Dashboard({ user, setUser }) {
 
             {message && <div className="info-box">{message}</div>}
 
-            <form onSubmit={submitPayment}>
-              <input name="amount" value={payment.amount} placeholder="Amount" onChange={updatePayment} required />
+            <form onSubmit={handleSubmit(handlePaymentSubmit)}>
+              <div>
+                <input
+                  {...register("amount", {
+                    required: errorMessages.amount.required,
+                    pattern: {
+                      value: validationRules.amount,
+                      message: errorMessages.amount.pattern
+                    }
+                  })}
+                  placeholder="Amount"
+                  type="number"
+                  step="0.01"
+                />
+                <FormError error={errors.amount?.message} />
+              </div>
 
-              <select name="currency" value={payment.currency} onChange={updatePayment}>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-                <option value="ZAR">ZAR</option>
-                <option value="AED">AED</option>
-              </select>
+              <div>
+                <select
+                  {...register("currency", {
+                    required: errorMessages.currency.required,
+                    pattern: {
+                      value: validationRules.currency,
+                      message: errorMessages.currency.pattern
+                    }
+                  })}
+                >
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="GBP">GBP</option>
+                  <option value="ZAR">ZAR</option>
+                  <option value="AED">AED</option>
+                </select>
+                <FormError error={errors.currency?.message} />
+              </div>
 
-              <select name="provider" value={payment.provider} onChange={updatePayment}>
-                <option value="SWIFT">SWIFT</option>
-              </select>
+              <div>
+                <select
+                  {...register("provider", {
+                    required: errorMessages.provider.required,
+                    pattern: {
+                      value: validationRules.provider,
+                      message: errorMessages.provider.pattern
+                    }
+                  })}
+                >
+                  <option value="SWIFT">SWIFT</option>
+                </select>
+                <FormError error={errors.provider?.message} />
+              </div>
 
-              <input name="payeeName" value={payment.payeeName} placeholder="Payee Full Name" onChange={updatePayment} required />
-              <input name="payeeAccountNumber" value={payment.payeeAccountNumber} placeholder="Payee Account Number" onChange={updatePayment} required />
-              <input name="swiftCode" value={payment.swiftCode} placeholder="SWIFT Code" onChange={updatePayment} required />
+              <div>
+                <input
+                  {...register("payeeName", {
+                    required: errorMessages.payeeName.required,
+                    pattern: {
+                      value: validationRules.fullName,
+                      message: errorMessages.payeeName.pattern
+                    }
+                  })}
+                  placeholder="Payee Full Name"
+                />
+                <FormError error={errors.payeeName?.message} />
+              </div>
 
-              <button type="submit" className="primary-btn full">Pay Now</button>
+              <div>
+                <input
+                  {...register("payeeAccountNumber", {
+                    required: errorMessages.payeeAccountNumber.required,
+                    pattern: {
+                      value: validationRules.accountNumber,
+                      message: errorMessages.payeeAccountNumber.pattern
+                    }
+                  })}
+                  placeholder="Payee Account Number"
+                />
+                <FormError error={errors.payeeAccountNumber?.message} />
+              </div>
+
+              <div>
+                <input
+                  {...register("swiftCode", {
+                    required: errorMessages.swiftCode.required,
+                    pattern: {
+                      value: validationRules.swiftCode,
+                      message: errorMessages.swiftCode.pattern
+                    }
+                  })}
+                  placeholder="SWIFT Code"
+                  style={{ textTransform: 'uppercase' }}
+                />
+                <FormError error={errors.swiftCode?.message} />
+              </div>
+
+              <button type="submit" className="primary-btn full" disabled={!isValid}>
+                Pay Now
+              </button>
             </form>
+
+            {showConfirm && (
+              <div className="confirm-dialog">
+                <div className="confirm-content">
+                  <h3>Confirm Payment</h3>
+                  <p>Are you sure you want to submit this payment?</p>
+                  <div className="confirm-buttons">
+                    <button onClick={() => setShowConfirm(false)} className="secondary-btn">
+                      Cancel
+                    </button>
+                    <button onClick={confirmPayment} className="primary-btn">
+                      Confirm Payment
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="panel">

@@ -1,30 +1,39 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import API from "../api";
+import { validationRules } from "../utils/validationRules";
+import { errorMessages } from "../utils/errorMessages";
+import FormError from "../components/FormError";
+import PasswordStrength from "../components/PasswordStrength";
 
 function Register({ setUser }) {
   const navigate = useNavigate();
-
-  const [form, setForm] = useState({
-    fullName: "",
-    idNumber: "",
-    username: "",
-    accountNumber: "",
-    password: "",
-  });
-
   const [message, setMessage] = useState("");
 
-  const updateForm = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    watch
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      fullName: "",
+      idNumber: "",
+      username: "",
+      accountNumber: "",
+      password: "",
+    }
+  });
 
-  const register = async (e) => {
-    e.preventDefault();
+  const password = watch("password");
+
+  const onSubmit = async (data) => {
     setMessage("");
 
     try {
-      const res = await API.post("/auth/register", form);
+      const res = await API.post("/auth/register", data);
       setUser(res.data.user);
       navigate("/dashboard");
     } catch (err) {
@@ -40,14 +49,82 @@ function Register({ setUser }) {
 
         {message && <div className="error-box">{message}</div>}
 
-        <form onSubmit={register}>
-          <input name="fullName" placeholder="Full Name" onChange={updateForm} required />
-          <input name="idNumber" placeholder="13-digit ID Number" onChange={updateForm} required />
-          <input name="username" placeholder="Username" onChange={updateForm} required />
-          <input name="accountNumber" placeholder="Account Number" onChange={updateForm} required />
-          <input name="password" type="password" placeholder="Strong Password" onChange={updateForm} required />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <input
+              {...register("fullName", {
+                required: errorMessages.fullName.required,
+                pattern: {
+                  value: validationRules.fullName,
+                  message: errorMessages.fullName.pattern
+                }
+              })}
+              placeholder="Full Name"
+            />
+            <FormError error={errors.fullName?.message} />
+          </div>
 
-          <button type="submit" className="primary-btn full">Register Securely</button>
+          <div>
+            <input
+              {...register("idNumber", {
+                required: errorMessages.idNumber.required,
+                pattern: {
+                  value: validationRules.idNumber,
+                  message: errorMessages.idNumber.pattern
+                }
+              })}
+              placeholder="13-digit ID Number"
+            />
+            <FormError error={errors.idNumber?.message} />
+          </div>
+
+          <div>
+            <input
+              {...register("username", {
+                required: errorMessages.username.required,
+                pattern: {
+                  value: validationRules.username,
+                  message: errorMessages.username.pattern
+                }
+              })}
+              placeholder="Username"
+            />
+            <FormError error={errors.username?.message} />
+          </div>
+
+          <div>
+            <input
+              {...register("accountNumber", {
+                required: errorMessages.accountNumber.required,
+                pattern: {
+                  value: validationRules.accountNumber,
+                  message: errorMessages.accountNumber.pattern
+                }
+              })}
+              placeholder="Account Number"
+            />
+            <FormError error={errors.accountNumber?.message} />
+          </div>
+
+          <div>
+            <input
+              {...register("password", {
+                required: errorMessages.password.required,
+                pattern: {
+                  value: validationRules.password,
+                  message: errorMessages.password.pattern
+                }
+              })}
+              type="password"
+              placeholder="Strong Password"
+            />
+            <FormError error={errors.password?.message} />
+            <PasswordStrength password={password} />
+          </div>
+
+          <button type="submit" className="primary-btn full" disabled={!isValid}>
+            Register Securely
+          </button>
         </form>
 
         <p className="small-link">

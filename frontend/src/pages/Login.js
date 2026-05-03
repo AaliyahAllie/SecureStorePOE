@@ -1,28 +1,33 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import API from "../api";
+import { validationRules } from "../utils/validationRules";
+import { errorMessages } from "../utils/errorMessages";
+import FormError from "../components/FormError";
 
 function Login({ setUser }) {
   const navigate = useNavigate();
-
-  const [form, setForm] = useState({
-    username: "",
-    accountNumber: "",
-    password: "",
-  });
-
   const [message, setMessage] = useState("");
 
-  const updateForm = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid }
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      username: "",
+      accountNumber: "",
+      password: "",
+    }
+  });
 
-  const login = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setMessage("");
 
     try {
-      const res = await API.post("/auth/login", form);
+      const res = await API.post("/auth/login", data);
       setUser(res.data.user);
       navigate("/dashboard");
     } catch (err) {
@@ -38,12 +43,53 @@ function Login({ setUser }) {
 
         {message && <div className="error-box">{message}</div>}
 
-        <form onSubmit={login}>
-          <input name="username" placeholder="Username" onChange={updateForm} required />
-          <input name="accountNumber" placeholder="Account Number" onChange={updateForm} required />
-          <input name="password" type="password" placeholder="Password" onChange={updateForm} required />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <input
+              {...register("username", {
+                required: errorMessages.username.required,
+                pattern: {
+                  value: validationRules.username,
+                  message: errorMessages.username.pattern
+                }
+              })}
+              placeholder="Username"
+            />
+            <FormError error={errors.username?.message} />
+          </div>
 
-          <button type="submit" className="primary-btn full">Login</button>
+          <div>
+            <input
+              {...register("accountNumber", {
+                required: errorMessages.accountNumber.required,
+                pattern: {
+                  value: validationRules.accountNumber,
+                  message: errorMessages.accountNumber.pattern
+                }
+              })}
+              placeholder="Account Number"
+            />
+            <FormError error={errors.accountNumber?.message} />
+          </div>
+
+          <div>
+            <input
+              {...register("password", {
+                required: errorMessages.password.required,
+                pattern: {
+                  value: validationRules.password,
+                  message: errorMessages.password.pattern
+                }
+              })}
+              type="password"
+              placeholder="Password"
+            />
+            <FormError error={errors.password?.message} />
+          </div>
+
+          <button type="submit" className="primary-btn full" disabled={!isValid}>
+            Login
+          </button>
         </form>
 
         <p className="small-link">
