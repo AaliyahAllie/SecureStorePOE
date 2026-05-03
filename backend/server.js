@@ -4,9 +4,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const session = require("express-session");
-const MongoStore = require("connect-mongo");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+
+const MongoStoreImport = require("connect-mongo");
+const MongoStore = MongoStoreImport.default || MongoStoreImport;
 
 const authRoutes = require("./routes/auth");
 const paymentRoutes = require("./routes/payments");
@@ -23,7 +25,7 @@ app.use(express.json({ limit: "10kb" }));
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
     credentials: true,
   })
 );
@@ -39,15 +41,23 @@ app.use(
   })
 );
 
+if (!process.env.MONGO_URI) {
+  console.error("MONGO_URI is missing. Check backend/.env");
+  process.exit(1);
+}
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Atlas connected"))
-  .catch((error) => console.error("MongoDB connection error:", error.message));
+  .catch((error) => {
+    console.error("MongoDB connection error:", error.message);
+    process.exit(1);
+  });
 
 app.use(
   session({
     name: "globalbank.sid",
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || "fallback_secret_change_this",
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
