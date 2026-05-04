@@ -120,4 +120,5 @@ module.exports = {
   registerValidation,
   loginValidation,
   paymentValidation,
+  patterns,
 };

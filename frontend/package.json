@@ -19,7 +19,8 @@
     "start": "react-scripts start",
     "start:https": "set HTTPS=true&&react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest --config ./jest.config.js",
+    "test:ci": "CI=true jest --config ./jest.config.js --runInBand --watchAll=false",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

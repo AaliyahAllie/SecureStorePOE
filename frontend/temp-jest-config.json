@@ -1,0 +1,52 @@
+{
+  "roots": [
+    "<rootDir>/src"
+  ],
+  "collectCoverageFrom": [
+    "src/**/*.{js,jsx,ts,tsx}",
+    "!src/**/*.d.ts"
+  ],
+  "setupFiles": [
+    "C:\\Users\\aaron\\.vscode\\globalbank-secure-portal\\frontend\\node_modules\\react-app-polyfill\\jsdom.js"
+  ],
+  "setupFilesAfterEnv": [
+    "<rootDir>/src/setupTests.js"
+  ],
+  "testMatch": [
+    "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+    "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+  ],
+  "testEnvironment": "jsdom",
+  "transform": {
+    "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "C:\\Users\\aaron\\.vscode\\globalbank-secure-portal\\frontend\\config\\jest\\babelTransform.js",
+    "^.+\\.css$": "C:\\Users\\aaron\\.vscode\\globalbank-secure-portal\\frontend\\config\\jest\\cssTransform.js",
+    "^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)": "C:\\Users\\aaron\\.vscode\\globalbank-secure-portal\\frontend\\config\\jest\\fileTransform.js"
+  },
+  "transformIgnorePatterns": [
+    "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$",
+    "^.+\\.module\\.(css|sass|scss)$"
+  ],
+  "modulePaths": [],
+  "moduleNameMapper": {
+    "^react-native$": "react-native-web",
+    "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
+  },
+  "moduleFileExtensions": [
+    "web.js",
+    "js",
+    "web.ts",
+    "ts",
+    "web.tsx",
+    "tsx",
+    "json",
+    "web.jsx",
+    "jsx",
+    "node"
+  ],
+  "watchPlugins": [
+    "jest-watch-typeahead/filename",
+    "jest-watch-typeahead/testname"
+  ],
+  "resetMocks": true,
+  "rootDir": "C:\\Users\\aaron\\.vscode\\globalbank-secure-portal\\frontend"
+}
