@@ -1,18 +1,13 @@
-const ExpressBrute = require("express-brute");
+const rateLimit = require("express-rate-limit");
 
-const store = new ExpressBrute.MemoryStore();
-
-const bruteForce = new ExpressBrute(store, {
-  freeRetries: 5,
-  minWait: 5 * 60 * 1000, // 5 minutes
-  maxWait: 60 * 60 * 1000, // 1 hour
-  lifetime: 60 * 60, // 1 hour
-  failCallback: (req, res /*, next, nextValidRequestDate */) => {
-    res.status(429).json({
-      success: false,
-      message: "Too many attempts. Please try again later.",
-    });
+const bruteForceProtection = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 login attempts
+  message: {
+    error: "Too many login attempts. Please try again later.",
   },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
-module.exports = bruteForce;
+module.exports = bruteForceProtection;

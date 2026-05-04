@@ -19,11 +19,13 @@ const paymentRoutes = require("./routes/payments");
 const app = express();
 
 app.enable("trust proxy");
+
 app.use(
   helmet({
     contentSecurityPolicy: false,
   })
 );
+
 app.use(helmet.frameguard({ action: "deny" }));
 app.use(helmet.noSniff());
 app.use(helmet.referrerPolicy({ policy: "no-referrer" }));
@@ -41,8 +43,9 @@ if (process.env.NODE_ENV === "production") {
 app.use(express.json({ limit: "10kb" }));
 
 const frontendOrigins = [
-  process.env.FRONTEND_URL || "https://localhost:3000",
+  process.env.FRONTEND_URL || "http://localhost:3000",
   "http://localhost:3000",
+  "https://localhost:3000",
 ];
 
 app.use(
@@ -93,8 +96,8 @@ app.use(
     }),
     cookie: {
       httpOnly: true,
-      secure: true, // Always secure for HTTPS
-      sameSite: "strict",
+      secure: true,
+      sameSite: "none",
       maxAge: 1000 * 60 * 60,
     },
   })
@@ -103,7 +106,7 @@ app.use(
 app.get("/", (req, res) => {
   res.json({
     success: true,
-    message: "GlobalBank Secure API is running",
+    message: "GlobalBank Secure HTTPS API is running",
   });
 });
 
@@ -117,17 +120,13 @@ app.use((req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
-// SSL options
 const sslOptions = {
-  key: fs.readFileSync(path.join(__dirname, 'certs', 'localhost-key.pem')),
-  cert: fs.readFileSync(path.join(__dirname, 'certs', 'localhost.pem'))
+  key: fs.readFileSync(path.join(__dirname, "certs", "localhost-key.pem")),
+  cert: fs.readFileSync(path.join(__dirname, "certs", "localhost.pem")),
 };
 
-// Create HTTPS server
-const server = https.createServer(sslOptions, app);
-
-server.listen(PORT, () => {
-  console.log(`🔒 Secure GlobalBank API running on https://localhost:${PORT}`);
+https.createServer(sslOptions, app).listen(PORT, () => {
+  console.log(`GlobalBank Secure API running on https://localhost:${PORT}`);
 });
