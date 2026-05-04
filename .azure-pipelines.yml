@@ -30,7 +30,7 @@ steps:
 - script: |
     cd frontend
     npm install
-    CI=true npm test -- --watchAll=false
+    npm run test:ci
     npm run build
   displayName: 'Install frontend dependencies, run frontend tests, and build'
 
