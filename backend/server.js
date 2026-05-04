@@ -6,6 +6,9 @@ const cors = require("cors");
 const session = require("express-session");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const https = require("https");
+const fs = require("fs");
+const path = require("path");
 
 const MongoStoreImport = require("connect-mongo");
 const MongoStore = MongoStoreImport.default || MongoStoreImport;
@@ -15,17 +18,41 @@ const paymentRoutes = require("./routes/payments");
 
 const app = express();
 
+app.enable("trust proxy");
 app.use(
   helmet({
     contentSecurityPolicy: false,
   })
 );
+app.use(helmet.frameguard({ action: "deny" }));
+app.use(helmet.noSniff());
+app.use(helmet.referrerPolicy({ policy: "no-referrer" }));
+
+if (process.env.NODE_ENV === "production") {
+  app.use(
+    helmet.hsts({
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    })
+  );
+}
 
 app.use(express.json({ limit: "10kb" }));
 
+const frontendOrigins = [
+  process.env.FRONTEND_URL || "https://localhost:3000",
+  "http://localhost:3000",
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: (origin, callback) => {
+      if (!origin || frontendOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("CORS policy: Origin not allowed"));
+    },
     credentials: true,
   })
 );
@@ -66,8 +93,8 @@ app.use(
     }),
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: true, // Always secure for HTTPS
+      sameSite: "strict",
       maxAge: 1000 * 60 * 60,
     },
   })
@@ -92,6 +119,15 @@ app.use((req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Secure GlobalBank API running on port ${PORT}`);
+// SSL options
+const sslOptions = {
+  key: fs.readFileSync(path.join(__dirname, 'certs', 'localhost-key.pem')),
+  cert: fs.readFileSync(path.join(__dirname, 'certs', 'localhost.pem'))
+};
+
+// Create HTTPS server
+const server = https.createServer(sslOptions, app);
+
+server.listen(PORT, () => {
+  console.log(`🔒 Secure GlobalBank API running on https://localhost:${PORT}`);
 });

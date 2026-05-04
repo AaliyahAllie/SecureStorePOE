@@ -7,10 +7,11 @@ const {
   loginValidation,
 } = require("../middleware/validators");
 const { requireAuth } = require("../middleware/authMiddleware");
+const bruteForce = require("../middleware/bruteForce");
 
 const router = express.Router();
 
-router.post("/register", registerValidation, async (req, res) => {
+router.post("/register", bruteForce.prevent, registerValidation, async (req, res) => {
   try {
     const { fullName, idNumber, username, accountNumber, password } = req.body;
 
@@ -58,7 +59,7 @@ router.post("/register", registerValidation, async (req, res) => {
   }
 });
 
-router.post("/login", loginValidation, async (req, res) => {
+router.post("/login", bruteForce.prevent, loginValidation, async (req, res) => {
   try {
     const { username, accountNumber, password } = req.body;
 

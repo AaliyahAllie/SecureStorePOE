@@ -32,21 +32,27 @@ const handleValidation = (req, res, next) => {
 const registerValidation = [
   body("fullName")
     .trim()
+    .escape()
+    .blacklist("$.")
     .matches(patterns.fullName)
     .withMessage("Full name may only contain letters, spaces, apostrophes and hyphens."),
 
   body("idNumber")
     .trim()
+    .blacklist("$.")
     .matches(patterns.idNumber)
     .withMessage("ID number must be exactly 13 digits."),
 
   body("username")
     .trim()
+    .escape()
+    .blacklist("$.")
     .matches(patterns.username)
     .withMessage("Username must be 4-20 characters and contain only letters, numbers or underscores."),
 
   body("accountNumber")
     .trim()
+    .blacklist("$.")
     .matches(patterns.accountNumber)
     .withMessage("Account number must be 8-12 digits."),
 
@@ -58,8 +64,17 @@ const registerValidation = [
 ];
 
 const loginValidation = [
-  body("username").trim().matches(patterns.username).withMessage("Invalid login details."),
-  body("accountNumber").trim().matches(patterns.accountNumber).withMessage("Invalid login details."),
+  body("username")
+    .trim()
+    .escape()
+    .blacklist("$.")
+    .matches(patterns.username)
+    .withMessage("Invalid login details."),
+  body("accountNumber")
+    .trim()
+    .blacklist("$.")
+    .matches(patterns.accountNumber)
+    .withMessage("Invalid login details."),
   body("password").notEmpty().withMessage("Invalid login details."),
   handleValidation,
 ];
@@ -81,11 +96,14 @@ const paymentValidation = [
 
   body("payeeName")
     .trim()
+    .escape()
+    .blacklist("$.")
     .matches(patterns.fullName)
     .withMessage("Payee name contains invalid characters."),
 
   body("payeeAccountNumber")
     .trim()
+    .blacklist("$.")
     .matches(patterns.accountNumber)
     .withMessage("Payee account number must be 8-12 digits."),
 
@@ -102,4 +120,5 @@ module.exports = {
   registerValidation,
   loginValidation,
   paymentValidation,
+  patterns,
 };

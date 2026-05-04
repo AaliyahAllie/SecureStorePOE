@@ -365,3 +365,125 @@ select:focus {
     gap: 14px;
   }
 }
+
+/* Confirmation Dialog */
+.confirm-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirm-content {
+  background: #1e293b;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.confirm-content h3 {
+  margin: 0 0 16px 0;
+  color: #f8fafc;
+  font-size: 24px;
+}
+
+.confirm-content p {
+  margin: 0 0 24px 0;
+  color: #cbd5e1;
+  font-size: 16px;
+}
+
+.confirm-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.confirm-buttons .secondary-btn {
+  background: #475569;
+  color: #f8fafc;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.confirm-buttons .secondary-btn:hover {
+  background: #64748b;
+}
+
+.confirm-buttons .primary-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.confirm-buttons .primary-btn:hover {
+  background: #2563eb;
+}
+
+/* Password Strength Indicator */
+.password-strength {
+  margin-top: 8px;
+  padding: 12px;
+  background: rgba(2, 6, 23, 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.strength-bar {
+  height: 6px;
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 3px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.strength-fill {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.strength-text {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.requirements-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+}
+
+.requirements-list li {
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.requirements-list li.met {
+  color: #22c55e;
+}
+
+.requirements-list li.not-met {
+  color: #ef4444;
+}
