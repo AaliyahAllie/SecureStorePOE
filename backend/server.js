@@ -16,9 +16,25 @@ const MongoStore = MongoStoreImport.default || MongoStoreImport;
 const authRoutes = require("./routes/auth");
 const paymentRoutes = require("./routes/payments");
 
+const employeeAuthRoutes =
+  require("./routes/employeeAuth");
+
+const employeePaymentRoutes =
+  require("./routes/employeePayments");
+
+const employeeAuditRoutes =
+  require("./routes/employeeAudit");
+
 const app = express();
 
-app.enable("trust proxy");
+/*
+|--------------------------------------------------------------------------
+| Security
+|--------------------------------------------------------------------------
+*/
+
+// Use this instead of app.enable("trust proxy")
+app.set("trust proxy", 1);
 
 app.use(
   helmet({
@@ -28,7 +44,11 @@ app.use(
 
 app.use(helmet.frameguard({ action: "deny" }));
 app.use(helmet.noSniff());
-app.use(helmet.referrerPolicy({ policy: "no-referrer" }));
+app.use(
+  helmet.referrerPolicy({
+    policy: "no-referrer",
+  })
+);
 
 if (process.env.NODE_ENV === "production") {
   app.use(
@@ -40,78 +60,165 @@ if (process.env.NODE_ENV === "production") {
   );
 }
 
-app.use(express.json({ limit: "10kb" }));
+app.use(
+  express.json({
+    limit: "10kb",
+  })
+);
+
+/*
+|--------------------------------------------------------------------------
+| CORS
+|--------------------------------------------------------------------------
+*/
 
 const frontendOrigins = [
-  process.env.FRONTEND_URL || "http://localhost:3000",
   "http://localhost:3000",
   "https://localhost:3000",
-];
+  process.env.FRONTEND_URL,
+].filter(Boolean);
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || frontendOrigins.includes(origin)) {
+    origin(origin, callback) {
+      if (
+        !origin ||
+        frontendOrigins.includes(origin)
+      ) {
         return callback(null, true);
       }
-      return callback(new Error("CORS policy: Origin not allowed"));
+
+      callback(
+        new Error(
+          "CORS policy: Origin not allowed"
+        )
+      );
     },
     credentials: true,
   })
 );
 
+/*
+|--------------------------------------------------------------------------
+| Rate Limit
+|--------------------------------------------------------------------------
+*/
+
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
-    message: {
-      success: false,
-      message: "Too many requests. Please try again later.",
-    },
+    standardHeaders: true,
+    legacyHeaders: false,
   })
 );
 
+/*
+|--------------------------------------------------------------------------
+| MongoDB
+|--------------------------------------------------------------------------
+*/
+
 if (!process.env.MONGO_URI) {
-  console.error("MONGO_URI is missing. Check backend/.env");
+  console.error(
+    "MONGO_URI missing in .env"
+  );
   process.exit(1);
 }
 
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Atlas connected"))
-  .catch((error) => {
-    console.error("MongoDB connection error:", error.message);
+  .then(() =>
+    console.log(
+      "MongoDB Atlas connected"
+    )
+  )
+  .catch((err) => {
+    console.error(err);
     process.exit(1);
   });
+
+/*
+|--------------------------------------------------------------------------
+| Session
+|--------------------------------------------------------------------------
+*/
 
 app.use(
   session({
     name: "globalbank.sid",
-    secret: process.env.SESSION_SECRET || "fallback_secret_change_this",
+    secret:
+      process.env.SESSION_SECRET ||
+      "change_this_secret",
+
     resave: false,
     saveUninitialized: false,
+
     store: MongoStore.create({
-      mongoUrl: process.env.MONGO_URI,
-      collectionName: "sessions",
+      mongoUrl:
+        process.env.MONGO_URI,
+      collectionName:
+        "sessions",
     }),
+
     cookie: {
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: 1000 * 60 * 60,
+
+      // local development
+      secure: false,
+
+      sameSite: "lax",
+
+      maxAge:
+        1000 * 60 * 60,
     },
   })
 );
 
+/*
+|--------------------------------------------------------------------------
+| Routes
+|--------------------------------------------------------------------------
+*/
+
 app.get("/", (req, res) => {
   res.json({
     success: true,
-    message: "GlobalBank Secure HTTPS API is running",
+    message:
+      "GlobalBank Secure HTTPS API is running",
   });
 });
 
-app.use("/api/auth", authRoutes);
-app.use("/api/payments", paymentRoutes);
+app.use(
+  "/api/auth",
+  authRoutes
+);
+
+app.use(
+  "/api/payments",
+  paymentRoutes
+);
+
+app.use(
+  "/api/employee/auth",
+  employeeAuthRoutes
+);
+
+app.use(
+  "/api/employee/payments",
+  employeePaymentRoutes
+);
+
+app.use(
+  "/api/employee/audit",
+  employeeAuditRoutes
+);
+
+/*
+|--------------------------------------------------------------------------
+| 404
+|--------------------------------------------------------------------------
+*/
 
 app.use((req, res) => {
   res.status(404).json({
@@ -120,13 +227,40 @@ app.use((req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 5001;
+/*
+|--------------------------------------------------------------------------
+| HTTPS Server
+|--------------------------------------------------------------------------
+*/
+
+const PORT =
+  process.env.PORT || 5001;
 
 const sslOptions = {
-  key: fs.readFileSync(path.join(__dirname, "certs", "localhost-key.pem")),
-  cert: fs.readFileSync(path.join(__dirname, "certs", "localhost.pem")),
+  key: fs.readFileSync(
+    path.join(
+      __dirname,
+      "certs",
+      "localhost-key.pem"
+    )
+  ),
+
+  cert: fs.readFileSync(
+    path.join(
+      __dirname,
+      "certs",
+      "localhost.pem"
+    )
+  ),
 };
 
-https.createServer(sslOptions, app).listen(PORT, () => {
-  console.log(`GlobalBank Secure API running on https://localhost:${PORT}`);
-});
+https
+  .createServer(
+    sslOptions,
+    app
+  )
+  .listen(PORT, () => {
+    console.log(
+      `GlobalBank Secure API running on https://localhost:${PORT}`
+    );
+  });

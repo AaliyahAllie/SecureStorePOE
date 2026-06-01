@@ -40,10 +40,29 @@ const paymentSchema = new mongoose.Schema(
       trim: true,
     },
     status: {
-      type: String,
-      enum: ["Pending", "Verified", "Submitted to SWIFT"],
-      default: "Pending",
-    },
+  type: String,
+  enum: [
+    "Pending",
+    "Verified",
+    "Rejected",
+    "Submitted to SWIFT"
+  ],
+  default: "Pending"
+},
+
+verifiedBy: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Employee"
+},
+
+verifiedAt: Date,
+
+rejectedReason: {
+  type: String,
+  default: ""
+},
+
+submittedAt: Date
   },
   { timestamps: true }
 );
