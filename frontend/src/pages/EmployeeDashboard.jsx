@@ -9,14 +9,11 @@ from "../services/employeeApi";
 import StatsCards
 from "../components/StatsCards";
 
-import PaymentsTable
-from "../components/PaymentsTable";
+import TransactionTable
+from "../components/TransactionTable";
 
 import SearchBar
 from "../components/SearchBar";
-
-import EmployeeNavbar
-from "../components/EmployeeNavbar";
 
 export default function EmployeeDashboard() {
 
@@ -68,9 +65,7 @@ export default function EmployeeDashboard() {
   }, []);
 
   return (
-    <div>
-
-      <EmployeeNavbar />
+    <div className="main-content">
 
       <h1>
         Employee Dashboard
@@ -84,9 +79,9 @@ export default function EmployeeDashboard() {
         onSearch={search}
       />
 
-      <PaymentsTable
-        payments={payments}
-        reload={loadData}
+      <TransactionTable
+        transactions={payments}
+        onReload={loadData}
       />
 
     </div>
