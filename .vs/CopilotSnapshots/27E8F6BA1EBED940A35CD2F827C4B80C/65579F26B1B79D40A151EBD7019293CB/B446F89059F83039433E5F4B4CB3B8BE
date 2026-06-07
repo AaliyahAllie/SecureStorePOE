@@ -1,0 +1,94 @@
+﻿import {
+  useEffect,
+  useState,
+} from "react";
+
+import employeeApi
+from "../services/employeeApi";
+
+import StatsCards
+from "../components/StatsCards";
+
+import PaymentsTable
+from "../components/PaymentsTable";
+
+import SearchBar
+from "../components/SearchBar";
+
+import EmployeeNavbar
+from "../components/EmployeeNavbar";
+
+export default function EmployeeDashboard() {
+
+  const [stats,
+    setStats] =
+    useState({});
+
+  const [payments,
+    setPayments] =
+    useState([]);
+
+  async function loadData() {
+
+    const statsRes =
+      await employeeApi.get(
+        "/employee/payments/stats"
+      );
+
+    const paymentRes =
+      await employeeApi.get(
+        "/employee/payments"
+      );
+
+    setStats(
+      statsRes.data
+    );
+
+    setPayments(
+      paymentRes.data.payments
+    );
+  }
+
+  async function search(
+    query
+  ) {
+
+    const res =
+      await employeeApi.get(
+        `/employee/payments/search?q=${query}`
+      );
+
+    setPayments(
+      res.data.payments
+    );
+  }
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  return (
+    <div>
+
+      <EmployeeNavbar />
+
+      <h1>
+        Employee Dashboard
+      </h1>
+
+      <StatsCards
+        stats={stats}
+      />
+
+      <SearchBar
+        onSearch={search}
+      />
+
+      <PaymentsTable
+        payments={payments}
+        reload={loadData}
+      />
+
+    </div>
+  );
+}
