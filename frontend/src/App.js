@@ -1,4 +1,5 @@
 import {
+  import {
   BrowserRouter,
   Routes,
   Route,
@@ -20,7 +21,14 @@ import Dashboard from "./pages/Dashboard";
 import EmployeeLogin from "./pages/EmployeeLogin";
 import EmployeeDashboard from "./pages/EmployeeDashboard";
 import AuditLogs from "./pages/AuditLogs";
+import About from "./pages/About";
 
+import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
+import Footer from "./components/Footer";
+
+import "./styles/theme.scss";
+import "./styles/global.scss";
 import "./App.css";
 
 function App() {
@@ -35,6 +43,10 @@ function App() {
   const [checkingSession,
     setCheckingSession] =
     useState(true);
+
+  const [sidebarOpen,
+    setSidebarOpen] =
+    useState(false);
 
   useEffect(() => {
 
@@ -125,6 +137,21 @@ function App() {
           }
         />
 
+        {/* About Page */}
+
+        <Route
+          path="/about"
+          element={
+            <EmployeeLayout
+              sidebarOpen={sidebarOpen}
+              onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+              onCloseSidebar={() => setSidebarOpen(false)}
+            >
+              <About />
+            </EmployeeLayout>
+          }
+        />
+
         {/* Customer Dashboard */}
 
         <Route
@@ -162,11 +189,17 @@ function App() {
           path="/employee/dashboard"
           element={
             employee ? (
-              <EmployeeDashboard
-                employee={
-                  employee
-                }
-              />
+              <EmployeeLayout
+                sidebarOpen={sidebarOpen}
+                onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+                onCloseSidebar={() => setSidebarOpen(false)}
+              >
+                <EmployeeDashboard
+                  employee={
+                    employee
+                  }
+                />
+              </EmployeeLayout>
             ) : (
               <Navigate
                 to="/employee/login"
@@ -175,7 +208,7 @@ function App() {
           }
         />
 
-        
+
 
       </Routes>
 
@@ -183,6 +216,19 @@ function App() {
 
   );
 
+}
+
+function EmployeeLayout({ children, sidebarOpen, onToggleSidebar, onCloseSidebar }) {
+  return (
+    <div className="app-container">
+      <Header onToggleSidebar={onToggleSidebar} />
+      <div className="app-shell">
+        <Sidebar open={sidebarOpen} onClose={onCloseSidebar} />
+        {children}
+      </div>
+      <Footer />
+    </div>
+  );
 }
 
 export default App;

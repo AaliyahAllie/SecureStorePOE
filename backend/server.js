@@ -6,6 +6,8 @@ const cors = require("cors");
 const session = require("express-session");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const cookieParser = require("cookie-parser");
+const csrf = require("csurf");
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
@@ -24,6 +26,8 @@ const employeePaymentRoutes =
 
 const employeeAuditRoutes =
   require("./routes/employeeAudit");
+
+const { csrfErrorHandler } = require("./middleware/csrfProtection");
 
 const app = express();
 
@@ -65,6 +69,15 @@ app.use(
     limit: "10kb",
   })
 );
+
+/*
+|--------------------------------------------------------------------------
+| CSRF Protection
+|--------------------------------------------------------------------------
+*/
+
+app.use(cookieParser());
+app.use(csrf({ cookie: true }));
 
 /*
 |--------------------------------------------------------------------------
@@ -213,6 +226,14 @@ app.use(
   "/api/employee/audit",
   employeeAuditRoutes
 );
+
+/*
+|--------------------------------------------------------------------------
+| CSRF Error Handler
+|--------------------------------------------------------------------------
+*/
+
+app.use(csrfErrorHandler);
 
 /*
 |--------------------------------------------------------------------------
