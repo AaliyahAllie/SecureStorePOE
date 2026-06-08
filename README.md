@@ -336,6 +336,11 @@ Pipeline configuration:
 ## Demonstration Video
 
  **YouTube Link:** 
+ https://youtu.be/5AkFyEJcfYY
+
+## Github Repo
+
+https://github.com/AaliyahAllie/SecureStorePOE.git
 
 ---
 
