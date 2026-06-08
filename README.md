@@ -52,6 +52,7 @@ Unlike customers, employees are pre-registered by the bank's administration team
 
 ### 1. Clone the Repository
 git clone https://github.com/AaliyahAllie/SecureStorePOE.git
+
 cd SecureStorePOE
 
 ### 2. Install Backend Dependencies
@@ -61,7 +62,9 @@ npm install
 ### 3. Install Frontend Dependencies
 
 cd frontend
+
 npm install
+
 cd ..
 
 ### 4. Configure Environment Variables
@@ -77,6 +80,7 @@ JWT_SECRET=your_secure_secret_key
 NODE_ENV=development
 
 ### 5.Generate SSL Certificate
+
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
 
 Generated files:
@@ -98,6 +102,7 @@ cd frontend
 npm run dev
 
 Frontend available at:
+
 https://localhost:3000
 
 
@@ -213,7 +218,10 @@ SecureStorePOE/
 
     Status Updated to Submitted 
 
+
+
 ## Attack Protections
+
 
 | Attack                     | Protection                                            |
 | -------------------------- | ----------------------------------------------------- |
@@ -237,6 +245,7 @@ CircleCI is configured to automatically:
 5. Report code quality metrics
 
 Pipeline configuration:
+
 .circleci/config.yml
 
 ## Demo video : 
