@@ -274,7 +274,7 @@ SecureStorePOE/
 
 ---
 
-**Attack Protections**
+## Attack Protections
 
 | Attack                     | Protection                                            |
 | -------------------------- | ----------------------------------------------------- |
