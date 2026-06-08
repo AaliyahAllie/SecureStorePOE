@@ -4,18 +4,21 @@ This project extends the Secure International Payments System by introducing a s
 
 Unlike customers, employees are pre-registered by the bank's administration team during onboarding and cannot self-register. Employees must authenticate using secure credentials before accessing payment information.
 
+---
+
 ## Group Members & Responsibilities
 
-| Member   | Task                                   | 
-| -------- | -------------------------------------- |
-| Member 1 | Admin portal(frontend and backend)     | 
-| Member 2 | Admin portal(frontend and backend)     | 
-| Member 3 | Documentation                          |  
-| Member 4 | Read me file                           | 
-| Member 5 | Documentation                          | 
+| Member                       | Task                                       |
+| ---------------------------- | ------------------------------------------ |
+|Member 1                      | Admin portal(frontend and backend)         |
+| Member 2                     |Login for admin(frontend and backend)       |
+| Member 3                     | Documentation                              |
+| Member  4                    | Read me file                               |
+| Member 5                     | Documentation                              |
 
+---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
 * **Frontend:** React (Vite)
 * **Backend:** Node.js + Express
@@ -27,7 +30,9 @@ Unlike customers, employees are pre-registered by the bank's administration team
 * **CI/CD:** CircleCI
 * **Code Quality & Security Analysis:** SonarQube
 
-## Security Features
+---
+
+## 🔐 Security Features
 
 | Feature                      | Tool / Method                              |
 | ---------------------------- | ------------------------------------------ |
@@ -43,33 +48,55 @@ Unlike customers, employees are pre-registered by the bank's administration team
 | DDoS protection              | Rate Limiting + WAF Strategy               |
 | DevSecOps pipeline           | CircleCI + SonarQube                       |
 
+---
+
+##  Getting Started
+
 ### Prerequisites
 
 * Node.js v18+
 * MongoDB
 * OpenSSL
 * GitHub Account
+* CircleCI Account
+* SonarQube Server
+
+---
 
 ### 1. Clone the Repository
+
+```bash
 git clone https://github.com/AaliyahAllie/SecureStorePOE.git
 
 cd SecureStorePOE
+```
+
+---
 
 ### 2. Install Backend Dependencies
 
+```bash
 npm install
+```
+
+---
 
 ### 3. Install Frontend Dependencies
 
+```bash
 cd frontend
 
 npm install
 
 cd ..
+```
+
+---
 
 ### 4. Configure Environment Variables
 
 Create a `.env` file:
+
 ```env
 PORT=3001
 
@@ -78,152 +105,177 @@ MONGO_URI=mongodb://localhost:27017/securestore
 JWT_SECRET=your_secure_secret_key
 
 NODE_ENV=development
+```
 
 ---
 
-### 5.Generate SSL Certificate
+### 5. Generate SSL Certificate
 
+```bash
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
+```
 
 Generated files:
 
 * `key.pem`
 * `cert.pem`
 
+ These files must never be committed to GitHub.
+
+---
+
 ### 6. Start the Backend
 
+```bash
 node server.js
+```
 
 Backend available at:
+
+```text
 https://localhost:3001
+```
+
+---
 
 ### 7. Start the Frontend
 
+```bash
 cd frontend
 
 npm run dev
+```
 
 Frontend available at:
 
+```text
 https://localhost:3000
+```
 
+---
 
-## Project Structure
+##  Project Structure
 
-SecureStorePOE/
+```text
+ 
+SecureStorePOE/ 
+ 
+├── .github/ 
+│   └── workflows/ 
+│       └── nodejs-ci.yml               
+│ 
+├── backend/ 
+│   │ 
+│   ├── middleware/ 
+│   │   ├── authMiddleware.js          
+│   │   ├── bruteForce.js              
+│   │   ├── csrfProtection.js         
+│   │   ├── employeeAuth.js             
+│   │   └── validators.js               
+│   │ 
+│   ├── models/ 
+│   │   ├── AuditLog.js               
+│   │   ├── Employee.js                 
+│   │   ├── Payment.js                 
+│   │   └── User.js                     
+│   │ 
+│   ├── routes/ 
+│   │   ├── auth.js                    
+│   │   ├── employeeAudit.js            
+│   │   ├── employeeAuth.js           
+│   │   ├── employeePayments.js       
+│   │   └── payments.js                
+│   │ 
+│   ├── scripts/ 
+│   │   └── seedEmployees.js            
+│   │ 
+│   ├── tests/ 
+│   │ 
+│   ├── __tests__/ 
+│   │ 
+│   ├── .env.example 
+│   ├── .gitignore 
+│   ├── generate-certs.js             
+│   ├── jest.config.js                 
+│   ├── package.json 
+│   ├── package-lock.json 
+│   ├── seedEmployee.js 
+│   └── server.js                    
+│ 
+├── frontend/ 
+│   ├── public/ 
+│   ├── src/ 
+│   │   ├── components/ 
+│   │   ├── pages/ 
+│   │   ├── services/ 
+│   │   └── App.jsx 
+│   │ 
+│   ├── .babelrc 
+│   ├── .env.example 
+│   ├── .gitignore 
+│   ├── jest.config.js 
+│   ├── package.json 
+│   └── package-lock.json 
+│   ├── src/ 
+│   ├── .azure-pipelines.yml 
+│   ├── .editorconfig 
+│   ├── .gitignore 
+│   ├──  .azure-pipelines -1.yml 
+│   ├──  .azure-pipelines.yml 
+│   └── README.md 
 
-├── .github/
-│   └── workflows/
-│       └── nodejs-ci.yml              
-│
-├── backend/
-│   │
-│   ├── middleware/
-│   │   ├── authMiddleware.js         
-│   │   ├── bruteForce.js             
-│   │   ├── csrfProtection.js        
-│   │   ├── employeeAuth.js            
-│   │   └── validators.js              
-│   │
-│   ├── models/
-│   │   ├── AuditLog.js              
-│   │   ├── Employee.js                
-│   │   ├── Payment.js                
-│   │   └── User.js                    
-│   │
-│   ├── routes/
-│   │   ├── auth.js                   
-│   │   ├── employeeAudit.js           
-│   │   ├── employeeAuth.js          
-│   │   ├── employeePayments.js      
-│   │   └── payments.js               
-│   │
-│   ├── scripts/
-│   │   └── seedEmployees.js           
-│   │
-│   ├── tests/
-│   │
-│   ├── __tests__/
-│   │
-│   ├── .env.example
-│   ├── .gitignore
-│   ├── generate-certs.js            
-│   ├── jest.config.js                
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── seedEmployee.js
-│   └── server.js                   
-│
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   └── App.jsx
-│   │
-│   ├── .babelrc
-│   ├── .env.example
-│   ├── .gitignore
-│   ├── jest.config.js
-│   ├── package.json
-│   └── package-lock.json
-│   ├── src/
-│   ├── .azure-pipelines.yml
-│   ├── .editorconfig
-│   ├── .gitignore
-│   ├──  .azure-pipelines -1.yml
-│   ├──  .azure-pipelines.yml
-│   └── README.md
+```
 
-## System Flow
+---
 
-    Employee Account Created by Administrator
+##  System Flow
 
-                ↓
-
-        Employee Login
-
-                ↓
-
-      Password Verification (bcrypt)
-
-                ↓
-
-        JWT Authentication
+```text
+  Employee Account Created by Administrator
 
                 ↓
 
-      View Pending Transactions
+         Employee Login
 
                 ↓
 
-      Review Account Details
+    Password Verification (bcrypt)
 
                 ↓
 
-        Verify SWIFT Code
+      JWT Authentication
 
                 ↓
 
-        Click "Verify"
+    View Pending Transactions
 
                 ↓
 
-   Transaction Marked Verified
+    Review Account Details
 
                 ↓
 
-        Click "Submit"
+       Verify SWIFT Code
 
                 ↓
 
-    Status Updated to Submitted 
+       Click "Verify"
 
+                ↓
 
+    Transaction Marked Verified
+
+                ↓
+
+     Click "Submit to SWIFT"
+
+                ↓
+
+   Status Updated to Submitted 
+
+---
 
 ## Attack Protections
-
 
 | Attack                     | Protection                                            |
 | -------------------------- | ----------------------------------------------------- |
@@ -235,8 +287,9 @@ SecureStorePOE/
 | DDoS Attacks               | Rate Limiting, Traffic Filtering, WAF Strategy        |
 | Brute Force Attacks        | Login Rate Limiting and Account Monitoring            |
 
+---
 
-##  CircleCI Pipeline
+## CircleCI Pipeline
 
 CircleCI is configured to automatically:
 
@@ -248,9 +301,46 @@ CircleCI is configured to automatically:
 
 Pipeline configuration:
 
+```text
 .circleci/config.yml
+```
 
-## Demo video : 
+---
+
+## SonarQube Security Analysis
+
+SonarQube performs static code analysis to identify:
+
+### Code Smells
+
+* Duplicate code
+* Unused variables
+* Poor coding practices
+
+### Security Hotspots
+
+* Authentication weaknesses
+* Missing validation
+* Potential security risks
+
+### Vulnerabilities
+
+* Hardcoded secrets
+* Unsafe code patterns
+* Security misconfigurations
+
+### Bugs
+
+* Runtime issues
+* Logic errors
+
+---
+
+## Demonstration Video
+
+ **YouTube Link:** 
+
+---
 
 ## References
 
@@ -265,10 +355,12 @@ Pipeline configuration:
 * MongoDB: https://mongoosejs.com/docs/
 * OpenSSL: https://www.openssl.org/docs/
 
+---
 
 ## Conclusion
 
 The Employee International Payments Portal was developed according to secure software development principles and banking security requirements. Through the implementation of strong authentication mechanisms, encrypted communications, secure coding practices, automated security testing, and DevSecOps processes, the system provides a secure platform for reviewing and processing international payments before submission to the SWIFT network.
 
+---
 
 > © 2026 The Independent Institute of Education (Pty) Ltd
