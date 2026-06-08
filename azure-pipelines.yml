@@ -10,19 +10,72 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+  # Install Node.js
   - task: NodeTool@0
     inputs:
       versionSpec: "22.x"
     displayName: "Install Node.js"
 
+  # Backend: install, test, build
   - script: |
       cd backend
       npm install
       npm test
-    displayName: "Run backend tests"
+      npm run build || echo "No backend build step"
+    displayName: "Backend tests and build"
 
+  # Frontend: install, test, build
   - script: |
       cd frontend
       npm install
       npm test -- --watchAll=false
-    displayName: "Run frontend tests"
+      npm run build
+    displayName: "Frontend tests and build"
+
+  # Security checks
+  - script: |
+      cd backend
+      npm audit --audit-level=moderate || true
+      cd ../frontend
+      npm audit --audit-level=moderate || true
+    displayName: "Run security audit"
+
+  # SonarQube scan (requires service connection)
+  - task: SonarQubePrepare@5
+    inputs:
+      SonarQube: "SonarQubeServiceConnection"
+      scannerMode: "CLI"
+      configMode: "manual"
+      cliProjectKey: "SecureStorePOE"
+      cliProjectName: "SecureStorePOE"
+      cliSources: "."
+  - task: SonarQubeAnalyze@5
+  - task: SonarQubePublish@5
+
+  # Publish frontend build artifacts
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: "frontend/build"
+      ArtifactName: "frontend"
+      publishLocation: "Container"
+
+  # Publish backend artifacts (if needed)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: "backend"
+      ArtifactName: "backend"
+      publishLocation: "Container"
+
+  # Deploy frontend to Azure Static Web App
+  - task: AzureStaticWebApp@0
+    inputs:
+      app_location: "frontend"
+      output_location: "build"
+      azure_static_web_apps_api_token: "$(deployment_token)"
+
+  # Deploy backend to Azure Web App
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: "YourAzureServiceConnection"
+      appName: "SecureStorePOE-backend"
+      package: "$(System.DefaultWorkingDirectory)/backend"
