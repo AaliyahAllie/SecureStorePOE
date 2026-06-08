@@ -1,7 +1,6 @@
 import axios from "axios";
 
 export default axios.create({
-  baseURL:
-    "https://localhost:5001/api",
-  withCredentials: true,
+  baseURL: "http://localhost:5001/api", // use http, not https
+  withCredentials: true, // send cookies for CSRF/session
 });

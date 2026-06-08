@@ -18,6 +18,9 @@ const MongoStore = MongoStoreImport.default || MongoStoreImport;
 const authRoutes = require("./routes/auth");
 const paymentRoutes = require("./routes/payments");
 
+const key = fs.readFileSync(path.join(__dirname, "certs", "localhost-key.pem"));
+const cert = fs.readFileSync(path.join(__dirname, "certs", "localhost.pem"));
+
 const employeeAuthRoutes =
   require("./routes/employeeAuth");
 
@@ -278,10 +281,7 @@ const sslOptions = {
 https
   .createServer(
     sslOptions,
-    app
-  )
-  .listen(PORT, () => {
-    console.log(
-      `GlobalBank Secure API running on https://localhost:${PORT}`
-    );
-  });
+    app.listen(PORT, () => {
+      console.log(`API running on http://localhost:${PORT}`);
+    });
+
