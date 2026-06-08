@@ -105,39 +105,69 @@ https://localhost:3000
 
 SecureStorePOE/
 
+├── .github/
+│   └── workflows/
+│       └── nodejs-ci.yml              
+│
+├── backend/
+│   │
+│   ├── middleware/
+│   │   ├── authMiddleware.js         
+│   │   ├── bruteForce.js             
+│   │   ├── csrfProtection.js        
+│   │   ├── employeeAuth.js            
+│   │   └── validators.js              
+│   │
+│   ├── models/
+│   │   ├── AuditLog.js              
+│   │   ├── Employee.js                
+│   │   ├── Payment.js                
+│   │   └── User.js                    
+│   │
+│   ├── routes/
+│   │   ├── auth.js                   
+│   │   ├── employeeAudit.js           
+│   │   ├── employeeAuth.js          
+│   │   ├── employeePayments.js      
+│   │   └── payments.js               
+│   │
+│   ├── scripts/
+│   │   └── seedEmployees.js           
+│   │
+│   ├── tests/
+│   │
+│   ├── __tests__/
+│   │
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── generate-certs.js            
+│   ├── jest.config.js                
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── seedEmployee.js
+│   └── server.js                   
+│
 ├── frontend/
+│   ├── public/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── EmployeeLogin.jsx
-│   │   │   ├── EmployeeDashboard.jsx
-│   │   │   ├── TransactionList.jsx
-│   │   │   └── VerificationPanel.jsx
+│   │   ├── pages/
+│   │   ├── services/
 │   │   └── App.jsx
-│   └── package.json
-│
-├── routes/
-│   ├── auth.js
-│   ├── employees.js
-│   └── transactions.js
-│
-├── middleware/
-│   ├── auth.js
-│   ├── validate.js
-│   └── security.js
-│
-├── models/
-│   ├── Employee.js
-│   └── Transaction.js
-│
-├── .circleci/
-│   └── config.yml
-│
-├── sonar-project.properties
-│
-├── server.js
-├── README.md
-├── key.pem
-└── cert.pem
+│   │
+│   ├── .babelrc
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── jest.config.js
+│   ├── package.json
+│   └── package-lock.json
+│   ├── src/
+│   ├── .azure-pipelines.yml
+│   ├── .editorconfig
+│   ├── .gitignore
+│   ├──  .azure-pipelines -1.yml
+│   ├──  .azure-pipelines.yml
+│   └── README.md
 
 ## System Flow
 
