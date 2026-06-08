@@ -32,7 +32,7 @@ Unlike customers, employees are pre-registered by the bank's administration team
 
 ---
 
-## 🔐 Security Features
+## Security Features
 
 | Feature                      | Tool / Method                              |
 | ---------------------------- | ------------------------------------------ |
@@ -225,7 +225,6 @@ SecureStorePOE/
 │   └── README.md 
 
 ```
-
 ---
 
 ##  System Flow
@@ -275,7 +274,7 @@ SecureStorePOE/
 
 ---
 
-## Attack Protections
+**Attack Protections**
 
 | Attack                     | Protection                                            |
 | -------------------------- | ----------------------------------------------------- |
@@ -308,8 +307,6 @@ Pipeline configuration:
 ---
 
 ## SonarQube Security Analysis
-
-SonarQube performs static code analysis to identify:
 
 ### Code Smells
 
