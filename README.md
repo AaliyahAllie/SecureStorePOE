@@ -79,6 +79,8 @@ JWT_SECRET=your_secure_secret_key
 
 NODE_ENV=development
 
+---
+
 ### 5.Generate SSL Certificate
 
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
