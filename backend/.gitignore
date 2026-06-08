@@ -1,4 +1,0 @@
-# Backend ignore rules
-.env
-node_modules/
-certs/
